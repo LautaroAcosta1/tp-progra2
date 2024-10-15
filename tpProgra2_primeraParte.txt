@@ -240,3 +240,7 @@ List<Vuelo> consultarVuelosPorFecha(String origen, String destino, String fecha)
         - destino esta vacio
         - fecha esta vacio
 
+
+
+ELIMINAR TAD JETPRIVADO Y MANEJAR SUS DATOS DESDE TAD VUELOPRIVADO. ELIMINAR TAMBIEN EL DATO DE CAPACIDAD MAXIMA DE ASIENTOS (15).
+METODO CREARVUELO(TAD VUELO) CAMBIAR LA FORMA EN LA QUE MANEJA LA VENTA DE PASAJES.
