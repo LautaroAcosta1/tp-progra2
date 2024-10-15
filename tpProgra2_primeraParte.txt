@@ -1,0 +1,242 @@
+TADs principales:
+    - BondiJet
+    - Cliente
+    - Aeropuerto
+    - Vuelo         // TAD VueloPrivado, TAD VueloNacional, TAD VueloInternacional
+    - Pasajero
+    - Asiento
+    - JetPrivado
+
+
+TAD BondiJet:
+    datos:
+        - nombre
+        - CUIT
+        - vuelos (TAD Vuelo)
+        - clientes (TAD Cliente)
+        - aeropuertos (TAD Aeropuerto)
+    operaciones:
+        - crear(String nombre)
+        - registrarCliente(TAD Cliente)
+        - registrarAeropuerto(TAD Aeropuerto)
+        - crearVuelo(TAD Vuelo)
+        - venderPasajeNacional(String dniCliente, String codigoVuelo, int nroAsiento)
+        - venderPasajeInternacional(String dniCliente, String codigoVuelo, int nroAsiento, String seccion)
+        - venderPasajePrivado(String dniComprador, List<Pasajero> listaPasajeros)
+        - cancelarVuelo(String codigoVuelo)
+        - cancelarPasaje(String dniCliente, String codigoVuelo, int nroAsiento)
+        - consultarVuelosPorFecha(String origen, String destino, String fecha)     --> devuelve lista de TAD Vuelo
+    IREP:
+        - nombre no debe estar vacio
+        - CUIT no debe estar vacio
+        - las listas de vuelos, clientes y aeropuertos no deben estar vacias
+
+
+TAD Cliente:
+    datos:
+        - dni
+        - nombre
+        - telefono
+    operaciones:
+        - obtenerDatos()        --> devuelve tupla(string, string, string), ej: los datos del cliente (dni, nombre, teléfono)
+        - cambiarTelefono(String nuevoTelefono)
+        - esCliente(String dni)        --> devuelve boolean (verifica si existe el cliente)
+    IREP:
+        - dni no debe estar vacio, debe ser unico
+        - nombre no debe estar vacio
+        - telefono no debe estar vacio, debe ser unico
+
+
+TAD Aeropuerto:
+    datos:
+        - nombre
+        - localizacion      --> String, ej: provincia/Estado, Pais
+        - direccion
+    operaciones:
+        - obtenerNombre()       --> devuelve String (nombre del aeropuerto)
+        - obtenerLocalizacion()     --> devuelve String (localización del aeropuerto)
+        - obtenerDireccion()        --> devuelve String (direccion completa del aeropuerto)
+        - esAeropuerto(String nombre)      --> devuelve booleno (verifica si existe el aeropuerto)
+    IREP:
+        - nombre no debe estar vacio
+        - localizacion no debe estar vacia, debe ser valida
+        - direccion no debe estar vacia, debe ser valida
+
+
+TAD Vuelo:
+    datos:
+        - codigo
+        - destino
+        - asientos (TAD Asiento)
+        - tripulantes
+        - pasajeros (TAD Pasajero)
+        - horaSalida
+        - aeropuertoSalida
+        - horaLlegada
+        - aeropuertoLlegada
+    operaciones:
+        - consultarAsientosDisponibles()        --> devuelve lista de TAD Asiento
+        - agregarPasajero(TAD Pasajero, int nroAsiento)
+        - eliminarPasajero(String dni)
+        - esCodigo(codigo)      --> verifica si el codigo existe
+    IREP:   
+        - codigo no debe estar vacio, debe ser unico
+        - destino no debe estar vacio, debe ser valido
+        - asientos: el numero de los asientos deber ser mayor a cero
+        - la lista de pasajeros no debe estar vacia
+        - horaSalida no debe estar vacio, debe estar entre 0 y 24
+        - horaLlegada no debe estar vacio, debe estar entre 0 y 24
+        - horaLlegada siempre debe ser mayor a horaSalida
+
+    TAD VueloPrivado (herencia de Vuelo):
+        datos:
+            - jets      --> lista de TAD JetPrivado
+            - clienteComprador (TAD Cliente)
+        operaciones:
+            - calcularPrecioTotal()     --> devuelve float
+            - agregarJet(TAD JetPrivado)
+        IREP:
+            - destino debe ser solo nacional
+            - jets deben tener una capacidad maxima de 15
+            - la cantidad de jets debe ser mayor o igual a 1
+
+    TAD VueloNacional (herencia de Vuelo):
+        datos:
+            - esDirecto         --> boolean
+            - refrigerio        --> int (1 refrigerio fijo)
+            - cantSecciones     --> int (2 secciones)
+            - maxPasajerosSeccion       --> lista de cantidades de pasajeros por seccion, ej: [30, 60]
+        operaciones:
+            - calcularPrecioPasaje(String seccion)        --> devuelve float (precio del pasaje teniendo en cuenta la seccion y el refrigerio)
+            - esVueloDirecto()      --> devuelve boolean
+        IREP:
+            - refrigerio debe ser igual 1
+            - cantSecciones debe ser igual 2
+            - maxPasajerosSeccion no debe ser mayor a la cantiadad de asientos en su respectiva seccion
+
+    TAD VueloInternacional (herencia de Vuelo):
+        datos:
+            - escalas (TAD Aeropuerto)          --> devuelve lista de aeropuertos en los que hizo escala
+            - esDirecto     --> boolean
+            - refrigerio        --> int (cantidad x de refrigerios)
+            - cantSecciones     --> int (3 secciones)
+            - maxPasajerosSeccion       --> lista de cantidades de pasajeros por seccion, ej: [30,40,60]
+        operaciones:
+            - calcularPrecioPasaje(String seccion)     --> devuelve float (precio del pasaje teniendo en cuenta la seccion y el refrigerio)
+            - agregarEscala(TAD Aeropuerto)  // Agrega una nueva escala al vuelo
+            - listarEscalas()       --> devuelve lista de TAD Aeropuerto (lista de escalas)
+            - esVueloDirecto()      --> devuelve boolean
+        IREP:
+            - si el vuelo tiene escalas, la lista de escalas no debe estar vacia
+            - refrigerio debe ser a mayor o igual a 1
+            - cantSecciones debe ser igual a 3
+            - maxPasajerosSeccion no debe ser mayor a la cantiadad de asientos en su respectiva seccion
+
+
+TAD Pasajero:
+    datos:
+        - dni
+        - nombre
+        - telefono
+        - asiento (TAD Asiento)
+        - vuelo (TAD Vuelo)
+    operaciones:
+        - obtenerDni()
+        - obtenerNombre()
+        - obetenerTelefono()
+        - obtenerAsiento()
+        - obtenerVuelo()
+    IREP:
+        - el pasajero debe estar registrado como cliente
+        - dni no debe estar vacio, debe ser unico
+        - nombre no debe estar vacio
+        - telefono no debe estar vacio
+        - el asiento asignado debe exitir en el vuelo
+
+
+TAD Asiento:
+    datos:
+        - nroAsiento
+        - seccion       --> lista con secciones, ej: [primera clase, clase ejecutiva, clase economica]
+        - ocupado       --> boolean
+    operaciones:
+        - esOcupado()       --> devuelve bool
+        - asignarPasajero(TAD Pasajero)
+        - liberarAsiento()
+    IREP:
+        - nroAsiento debe ser positivo, debe ser unico en el vuelo
+        - seccion debe ser igual cualquiera de las secciones que incluye el vuelo
+
+
+TAD JetPrivado:
+    datos:
+        - capacidadMax      --> int (15 asientos por jet)
+        - cantJets      --> int (cantidad de jets asignados al vuelo)
+        - precioPorJet
+    operaciones:
+        - calcularPrecioTotal()     --> devuelve float (precio total del vuelo privado teniendo en cuenta los impuestos)
+    IREP:
+        - capacidadMax debe ser igual a 15 asientos
+        - cantJets debe ser mayor o igual a 1 (depende la cantidad de pasajeros)
+        - precioPorJet debe ser mayor a cero
+
+
+
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ INTERFAZ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+BondiJet(String nombre)     --> constructor
+    - nombre no debe estar vacío.
+
+void registrarCliente(Cliente cliente)
+    lanza un excepcion si:
+        - cliente esta vacio
+        - si cliente ya existe
+
+void registrarAeropuerto(Aeropuerto aeropuerto)
+    lanza una excepcion si:
+        - aeropuerto esta vacio
+        - si aeropuerto no es valido
+
+void crearVuelo(Vuelo vuelo)
+    - lanza una excepcion si:
+        - vuelo esta vacio
+
+void venderPasajeNacional(String dniCliente, String codigoVuelo, int nroAsiento)
+    - lanza una excepcion si:
+        - dniCliente esta vacio, o es repetido
+        - codigoVuelo esta vacio, o es repetido, o no existe
+        - nroAsiento esta vacio, o es repetido, o esta ocupado, o es menor a cero
+
+void venderPasajeInternacional(String dniCliente, String codigoVuelo, int nroAsiento, String seccion)
+    - lanza una excepcion si:
+        - dniCliente esta vacio, o es repetido
+        - codigoVuelo esta vacio, o es repetido, o no existe
+        - nroAsiento esta vacio, o es repetido, o esta ocupado, o es menor a cero
+        - seccion es distinta a cualquiera de las secciones que incluye el vuelo
+ 
+void venderPasajePrivado(String dniComprador, List<Pasajero> listaPasajeros)
+    - lanza una excepcion si:
+        - dniComprador esta vacio, o es repetido
+        - listaPasajeros esta vacia
+    - si length listaPasajeros es mayor a 15:
+        - agregarJet(TAD JetPrivado)
+
+void cancelarVuelo(String codigoVuelo)
+    - lanza una excepcion si:
+        - codigoVuelo esta vacio, o es repetido, o no existe
+
+void cancelarPasaje(String dniCliente, String codigoVuelo, int nroAsiento)
+    - lanza una excepcion si:
+        - dniCliente esta vacio, o es repetido
+        - codigoVuelo esta vacio, o es repetido, o no existe
+        - nroAsiento esta vacio, o es repetido, o esta ocupado, o es menor a cero
+        
+List<Vuelo> consultarVuelosPorFecha(String origen, String destino, String fecha)
+    - lanza una excepcion si:
+        - origen esta vacio, o es igual a destino
+        - destino esta vacio
+        - fecha esta vacio
+
